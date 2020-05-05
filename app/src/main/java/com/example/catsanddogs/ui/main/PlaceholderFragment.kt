@@ -1,24 +1,20 @@
 package com.example.catsanddogs.ui.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.catsanddogs.R
 import com.example.catsanddogs.utility.GlideApp
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.get
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
 /**
  * A placeholder fragment containing a simple view.
@@ -26,7 +22,6 @@ import kotlin.coroutines.coroutineContext
 class PlaceholderFragment : ScopedFragment() {
 
     private val pageViewModel: PageViewModel = get(PageViewModel::class.java)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel.setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
@@ -36,12 +31,50 @@ class PlaceholderFragment : ScopedFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_main, container, false)
         launch { pageViewModel.loadDogPicture() }
+        return inflater.inflate(R.layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        swiperefresh.isRefreshing = true
         pageViewModel.dogPicture.observe(
             viewLifecycleOwner,
-            Observer { GlideApp.with(this).load(it.url).into(image) })
-        return root
+            Observer {
+                GlideApp.with(this)
+                    .load(it.url)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            swiperefresh.isRefreshing = false
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            swiperefresh.isRefreshing = false
+                            return false
+                        }
+                    })
+                    .into(image)
+            })
+        setUpRefreshLayout()
+    }
+
+    private fun setUpRefreshLayout() {
+        swiperefresh.setOnRefreshListener {
+            launch { pageViewModel.loadDogPicture() }
+        }
     }
 
     companion object {
