@@ -13,9 +13,12 @@ import com.example.catsanddogs.utility.NoInternetConnectionException
 class PageViewModel(private val dogApiService: DogApiService) : ViewModel() {
 
     private val _dogPicture = MutableLiveData<RandomDogPictureResponse>()
+    private val _index = MutableLiveData<Int>()
 
     val dogPicture: LiveData<RandomDogPictureResponse>
         get() = _dogPicture
+    val index: LiveData<Int>
+        get() = _index
 
     suspend fun loadDogPicture() {
         try {
@@ -24,5 +27,9 @@ class PageViewModel(private val dogApiService: DogApiService) : ViewModel() {
         } catch (e: NoInternetConnectionException) {
             Log.d("Internet:", "No connection!", e)
         }
+    }
+
+    fun setIndex(index:Int){
+        _index.postValue(index)
     }
 }
