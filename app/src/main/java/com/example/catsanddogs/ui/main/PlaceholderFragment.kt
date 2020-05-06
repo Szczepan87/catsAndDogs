@@ -61,6 +61,7 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
             Observer {
                 GlideApp.with(this)
                     .load(it.first().url)
+                    .dontTransform()
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -93,6 +94,7 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
             Observer {
                 GlideApp.with(this)
                     .load(it.url)
+                    .dontTransform()
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
