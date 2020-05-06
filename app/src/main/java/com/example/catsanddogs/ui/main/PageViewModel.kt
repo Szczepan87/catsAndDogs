@@ -19,14 +19,11 @@ class PageViewModel(
 
     private val _dogPicture = MutableLiveData<RandomDogPictureResponse>()
     private val _catPicture = MutableLiveData<RandomCatPictureResponse>()
-    private val _index = MutableLiveData<Int>()
 
     val dogPicture: LiveData<RandomDogPictureResponse>
         get() = _dogPicture
     val catPicture: LiveData<RandomCatPictureResponse>
         get() = _catPicture
-    val index: LiveData<Int>
-        get() = _index
 
     suspend fun loadDogPicture() {
         try {
@@ -44,9 +41,5 @@ class PageViewModel(
         } catch (e: NoInternetConnectionException) {
             Log.d("Internet:", "No connection!", e)
         }
-    }
-
-    fun setIndex(index: Int) {
-        _index.postValue(index)
     }
 }
