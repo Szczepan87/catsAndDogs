@@ -31,7 +31,7 @@ class PlaceholderFragment : ScopedFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        launch { pageViewModel.loadDogPicture() }
+        launch { pageViewModel.loadCatPicture() }
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -39,11 +39,11 @@ class PlaceholderFragment : ScopedFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         swiperefresh.isRefreshing = true
-        pageViewModel.dogPicture.observe(
+        pageViewModel.catPicture.observe(
             viewLifecycleOwner,
             Observer {
                 GlideApp.with(this)
-                    .load(it.url)
+                    .load(it.first().url)
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -73,7 +73,7 @@ class PlaceholderFragment : ScopedFragment() {
 
     private fun setUpRefreshLayout() {
         swiperefresh.setOnRefreshListener {
-            launch { pageViewModel.loadDogPicture() }
+            launch { pageViewModel.loadCatPicture() }
         }
     }
 
