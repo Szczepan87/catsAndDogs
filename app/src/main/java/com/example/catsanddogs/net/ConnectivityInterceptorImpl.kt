@@ -17,9 +17,9 @@ class ConnectivityInterceptorImpl(context: Context) : ConnectivityInterceptor {
     /**
      * Throws custom exception when is not online.
      */
-    override fun intercept(chain: Interceptor.Chain): Response {
-        return if (isOnline().not()) throw NoInternetConnectionException() else chain.proceed(chain.request())
-    }
+    override fun intercept(chain: Interceptor.Chain): Response =
+        if (isOnline().not()) throw NoInternetConnectionException() else chain.proceed(chain.request())
+
 
     /**
      * Checks connection to the Internet.

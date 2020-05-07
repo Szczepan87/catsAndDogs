@@ -1,18 +1,13 @@
 package com.example.catsanddogs.ui.main
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.catsanddogs.R
 import com.example.catsanddogs.utility.AnimalType
-import com.example.catsanddogs.utility.GlideApp
+import com.example.catsanddogs.utility.PictureLoader
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.get
@@ -23,6 +18,7 @@ import org.koin.java.KoinJavaComponent.get
 class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment() {
 
     private val pageViewModel: PageViewModel = get(PageViewModel::class.java)
+    private val pictureLoader = PictureLoader(this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,32 +55,7 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
         pageViewModel.catPicture.observe(
             viewLifecycleOwner,
             Observer {
-                GlideApp.with(this)
-                    .load(it.first().url)
-                    .dontTransform()
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            swiperefresh.isRefreshing = false
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            swiperefresh.isRefreshing = false
-                            return false
-                        }
-                    })
-                    .into(image)
+                pictureLoader.loadPictureFromURL(it.first().url, swiperefresh, image)
             })
     }
 
@@ -92,32 +63,7 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
         pageViewModel.dogPicture.observe(
             viewLifecycleOwner,
             Observer {
-                GlideApp.with(this)
-                    .load(it.url)
-                    .dontTransform()
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            swiperefresh.isRefreshing = false
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            swiperefresh.isRefreshing = false
-                            return false
-                        }
-                    })
-                    .into(image)
+                pictureLoader.loadPictureFromURL(it.url, swiperefresh, image)
             })
     }
 }
