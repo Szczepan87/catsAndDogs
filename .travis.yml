@@ -23,7 +23,9 @@ android:
     - 'google-gdk-license-.+'
     
 before_install:
-- chmod +x gradlew
+  - chmod +x gradlew
+  - yes | sdkmanager "platforms;android-27"
+  - yes | sdkmanager "build-tools;27.0.3"
     
 before_script:
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
