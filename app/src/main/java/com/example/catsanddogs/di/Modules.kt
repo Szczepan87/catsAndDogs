@@ -22,24 +22,26 @@ val viewModelModule = module {
 }
 
 val networkModule = module {
-    single { provideDogRetrofit(androidContext()) }
-    single { provideCatRetrofit(androidContext()) }
+    single {
+        provideRetrofitBuilder(
+            androidContext(),
+            DOG_BASE_URL
+        ).create(DogApiService::class.java)
+    }
+    single {
+        provideRetrofitBuilder(
+            androidContext(),
+            CAT_BASE_URL
+        ).create(CatApiService::class.java)
+    }
 }
 
-private fun provideDogRetrofit(context: Context) = Retrofit.Builder()
+private fun provideRetrofitBuilder(context: Context, baseUrl: String) = Retrofit.Builder()
     .client(provideOkHttpClient(context))
-    .baseUrl(DOG_BASE_URL)
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-    .addConverterFactory(GsonConverterFactory.create())
-    .build().create(DogApiService::class.java)
-
-private fun provideCatRetrofit(context: Context) = Retrofit.Builder()
-    .client(provideOkHttpClient(context))
-    .baseUrl(CAT_BASE_URL)
+    .baseUrl(baseUrl)
     .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .addConverterFactory(GsonConverterFactory.create())
     .build()
-    .create(CatApiService::class.java)
 
 private fun provideOkHttpClient(context: Context) = OkHttpClient.Builder()
     .addInterceptor(ConnectivityInterceptorImpl(context))

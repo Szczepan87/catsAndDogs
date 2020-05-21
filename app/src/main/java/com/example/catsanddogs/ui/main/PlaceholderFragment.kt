@@ -24,9 +24,7 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (animalType == AnimalType.DOG) {
-            launch { pageViewModel.loadDogPicture() }
-        } else launch { pageViewModel.loadCatPicture() }
+        loadAnimalPicture()
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -45,10 +43,14 @@ class PlaceholderFragment(private val animalType: AnimalType) : ScopedFragment()
 
     private fun setUpRefreshLayout() {
         swiperefresh.setOnRefreshListener {
-            if (animalType == AnimalType.DOG) {
-                launch { pageViewModel.loadDogPicture() }
-            } else launch { pageViewModel.loadCatPicture() }
+            loadAnimalPicture()
         }
+    }
+
+    private fun loadAnimalPicture() {
+        if (animalType == AnimalType.DOG) {
+            launch { pageViewModel.loadDogPicture() }
+        } else launch { pageViewModel.loadCatPicture() }
     }
 
     private fun setUpCatPicture() {
