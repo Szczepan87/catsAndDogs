@@ -16,4 +16,5 @@ branches:
   - /.*/
   
 script:
+chmod +x gradlew
 - ./gradlew clean test assembleDebug
